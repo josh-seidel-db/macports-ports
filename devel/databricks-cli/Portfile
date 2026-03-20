@@ -1,0 +1,65 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           github 1.0
+
+github.setup        databricks cli 0.295.0 v
+name                databricks-cli
+revision            0
+
+categories          devel
+license             Apache-2
+maintainers         nomaintainer
+supported_archs     x86_64 arm64
+
+description         Command-line interface for the Databricks platform
+
+long_description    The Databricks CLI is an open source tool which provides \
+                    an easy-to-use interface to the Databricks platform. It is \
+                    built on top of the Databricks REST APIs and includes \
+                    support for Databricks Asset Bundles (DABs) for managing \
+                    and deploying data and AI projects.
+
+homepage            https://docs.databricks.com/dev-tools/cli/index.html
+
+use_configure       no
+use_xcode           no
+installs_libs       no
+extract.suffix      .tar.gz
+
+if {${configure.build_arch} eq "arm64"} {
+    set arch_string arm64
+    distname        databricks_cli_${version}_darwin_arm64
+    checksums       md5    a3f3c2d1116960042af5458aaec8dd14\
+                    sha1   aef4a80fe829d07c4d493ecfa0ff59b8f29fb2a2\
+                    rmd160 5d4a7ecc5a7aeb64b097f510c351a9838bb39ea4\
+                    sha256 b975df2499f4342b0000da1f94ebb3874150ccf23f53c03787e756e2c76dc9f8\
+                    size   13291618
+} elseif {${configure.build_arch} eq "x86_64"} {
+    set arch_string amd64
+    distname        databricks_cli_${version}_darwin_amd64
+    checksums       md5    ae1e951172f162a537b2630d2672a7bf\
+                    sha1   3fac0e7fbfec0971165a74a2b0b87b5a800c9ad6\
+                    rmd160 9acbb2b17e636d804509c30d3d7dcee0166980f8\
+                    sha256 308f7f74bd71813b5fdf6365b8de675254f7f82564fec3a87f931d02892e8347\
+                    size   14141678
+}
+
+master_sites        https://github.com/databricks/cli/releases/download/v${version}/
+
+extract.mkdir       yes
+
+build               {}
+
+destroot {
+    xinstall -m 0755 ${worksrcpath}/databricks ${destroot}${prefix}/bin/databricks
+}
+
+notes "
+The Databricks CLI has been installed. To configure authentication, run:
+
+    databricks configure
+
+For more information, see:
+    https://docs.databricks.com/dev-tools/cli/index.html
+"
