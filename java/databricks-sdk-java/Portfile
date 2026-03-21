@@ -1,0 +1,82 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           java 1.0
+PortGroup           github 1.0
+
+github.setup        databricks databricks-sdk-java 0.129.0 v
+name                databricks-sdk-java
+revision            0
+
+categories          java devel
+license             Apache-2
+supported_archs     noarch
+maintainers         nomaintainer
+
+description         Databricks SDK for Java
+
+long_description    The Databricks SDK for Java includes functionality to accelerate \
+                    development with Java for the Databricks Lakehouse. It covers all \
+                    public Databricks REST API operations and provides a unified \
+                    authentication experience with support for OAuth, PAT, and other \
+                    Databricks-native credential providers.
+
+homepage            https://docs.databricks.com/dev-tools/sdk-java.html
+
+java.version        8+
+java.fallback       openjdk11
+
+set sdk_name        databricks-sdk-java
+
+master_sites        https://github.com/databricks/databricks-sdk-java/releases/download/v${version}/
+distfiles           ${sdk_name}-${version}.jar \
+                    ${sdk_name}-${version}-sources.jar \
+                    ${sdk_name}-${version}-javadoc.jar
+
+checksums           ${sdk_name}-${version}.jar \
+                    rmd160  5ad1e362cac29dfc47489baf69faf63f73daffc2 \
+                    sha256  82b4d601170dcc7c91420c2310a1380d66fe957ef73fdbfaed5223dd5e48ba79 \
+                    size    5409817 \
+                    ${sdk_name}-${version}-sources.jar \
+                    rmd160  d8952141ca15bf72d13b7f0564d026a35a293e2f \
+                    sha256  20c9fba24479ddb88b4615b17674dcc9d8d2c314a262af576a7f80f5f422f5c4 \
+                    size    3914422 \
+                    ${sdk_name}-${version}-javadoc.jar \
+                    rmd160  68e545b0505c58fa2b77a08f63fd92e7baa50b00 \
+                    sha256  89d156c5386abcb2d85756a4975bb7c2f862c549869f39874e47148dbd90c7cd \
+                    size    22445120
+
+extract.cmd         unzip
+extract.pre_args    -q
+extract.post_args   -d ${workpath}/api
+extract.only        ${sdk_name}-${version}-javadoc.jar
+
+use_configure       no
+
+build {}
+
+destroot {
+    set javadir ${destroot}${prefix}/share/java
+    set docdir ${destroot}${prefix}/share/doc/${name}
+
+    xinstall -d ${javadir} ${docdir}
+
+    file copy ${distpath}/${sdk_name}-${version}.jar \
+        ${javadir}/${sdk_name}.jar
+    file copy ${distpath}/${sdk_name}-${version}-sources.jar \
+        ${javadir}/${sdk_name}-sources.jar
+
+    file copy ${workpath}/api ${docdir}
+}
+
+notes "
+The Databricks SDK for Java JARs have been installed to:
+
+    ${prefix}/share/java/${sdk_name}.jar
+    ${prefix}/share/java/${sdk_name}-sources.jar
+
+Add them to your classpath to use in your Java projects.
+API documentation is available at:
+
+    ${prefix}/share/doc/${name}/api/
+"
